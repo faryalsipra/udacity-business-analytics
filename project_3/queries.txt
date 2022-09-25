@@ -1,0 +1,53 @@
+
+/*1.1 Top 10 artist by track inventory */
+SELECT Artist.Name AS Name,
+       COUNT(Album.Title) AS Total
+FROM Artist
+JOIN Album ON Artist.ArtistId=Album.ArtistId
+GROUP BY Artist.Name
+ORDER BY Total DESC
+LIMIT 10
+
+/*1.2 Top 10 artists by tracks sold */
+SELECT at.Name,
+       sum(i.Quantity) AS Sold
+FROM InvoiceLine AS i
+JOIN Track AS t ON t.TrackId=i.TrackId
+JOIN Album AS al ON al.AlbumId=t.AlbumId
+JOIN Artist AS AT ON at.ArtistId=al.ArtistId
+GROUP BY at.Name
+ORDER BY Sold DESC
+LIMIT 10
+
+***********************
+/*2. Top 10 customers by sales */
+
+SELECT c.FirstName || ' ' ||c.LastName AS CustomerName,
+       sum(i.Total) AS InvoiceTotal
+FROM Customer AS c
+JOIN Invoice AS i ON i.CustomerId = c.CustomerId
+GROUP BY CustomerName
+ORDER BY Invoicetotal DESC
+LIMIT 10;
+
+************************
+
+/*3. Average price by Genre*/
+SELECT Genre.Name AS GenreTitle,
+       round(avg(Track.UnitPrice), 2) AS Total
+FROM Genre
+JOIN Track ON Track.GenreId=Genre.GenreId
+GROUP BY GenreTitle
+ORDER BY Total DESC
+
+
+**************************
+/*4. Percentage of customers handled per employee */
+SELECT e.FirstName || ' ' ||e.LastName AS EmployeeName,
+       count(*) AS Customers,
+       round(count(*) * 100.0 /
+               (SELECT count(*)
+                FROM Customer), 2) AS CustomerPercentage
+FROM Customer AS c
+JOIN Employee AS e ON e.EmployeeId=c.SupportRepId
+GROUP BY EmployeeName
